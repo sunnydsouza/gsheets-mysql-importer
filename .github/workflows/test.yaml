@@ -60,9 +60,7 @@ jobs:
       - name: Verify MySQL connection from host
         run: |
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
-#          mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'CREATE DATABASE expenses;' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'CREATE DATABASE sampledb;' -uroot -ppassword
-          #sampledb
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword sampledb< configuration/sampletest.sql
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
       - id: 'auth'
