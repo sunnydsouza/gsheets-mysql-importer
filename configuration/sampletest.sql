@@ -1,5 +1,3 @@
-CREATE DATABASE `expenses` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-
 -- expenses.Expense definition
 
 CREATE TABLE `Expense` (
