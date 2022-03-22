@@ -27,15 +27,17 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Basic wrapper over Google Sheets API, based on examples from https://developers.google.com/sheets/api/quickstart/java
- * Allows for basic CRUD operations on Google Sheets
+ * Basic wrapper over Google Sheets API, based on examples from
+ * https://developers.google.com/sheets/api/quickstart/java Allows for basic CRUD operations on
+ * Google Sheets
+ *
  * @author sunnydsouza
  */
 public class GsheetsApi {
   private static final String APPLICATION_NAME = "Simple Gsheets API wrapper by sunnydsouza";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final String TOKENS_DIRECTORY_PATH = "tokens";
-  static final Logger logger= LoggerFactory.getLogger(GsheetsApi.class);
+  static final Logger logger = LoggerFactory.getLogger(GsheetsApi.class);
 
   /**
    * Global instance of the scopes required by this quickstart. If modifying these scopes, delete
@@ -72,6 +74,28 @@ public class GsheetsApi {
   }
 
   /**
+   * Build and return an authorized Sheets API client service.
+   *
+   * @param HTTP_TRANSPORT
+   * @return
+   * @throws IOException
+   */
+  /*private static Credential getServiceAccountCredentials(final NetHttpTransport HTTP_TRANSPORT)
+            throws IOException {
+
+
+  // Initializing the service:
+      final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+      GoogleCredentials googleCredentials;
+      try(InputStream inputSteam = <YOURCLASS>.class.getResourceAsStream("/path/to/credentials/file.json")) {
+        googleCredentials = GoogleCredentials.fromStream(credentialsStream).createScoped(SCOPES)
+      }
+      Sheets service = Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(googleCredentials))
+              .setApplicationName(APPLICATION_NAME)
+              .build()
+    }*/
+
+  /**
    * Gets the headers of the table for a given sheet range
    *
    * @param spreadsheetId The spreadsheet id
@@ -86,14 +110,15 @@ public class GsheetsApi {
     return readSheetValues(spreadsheetId, range);
   }
 
-    /**
-     * Gets the values of a Google sheet for a given sheet range
-     * @param spreadsheetId The spreadsheet id
-     * @param range The range of the sheet
-     * @return result rows in form of list of list of objects
-     * @throws GeneralSecurityException
-     * @throws IOException
-     */
+  /**
+   * Gets the values of a Google sheet for a given sheet range
+   *
+   * @param spreadsheetId The spreadsheet id
+   * @param range The range of the sheet
+   * @return result rows in form of list of list of objects
+   * @throws GeneralSecurityException
+   * @throws IOException
+   */
   public static List<List<Object>> readSheetValues(String spreadsheetId, String range)
       throws GeneralSecurityException, IOException {
 
@@ -114,15 +139,16 @@ public class GsheetsApi {
     }
   }
 
-    /**
-     * Appends rows to a Google sheet AFTER a given sheet range
-     * @param spreadsheetId The spreadsheet id
-     * @param range      The range of the sheet
-     * @param rowValues The rows to be appended in form of List<Object>
-     * @return updated row count
-     * @throws GeneralSecurityException
-     * @throws IOException
-     */
+  /**
+   * Appends rows to a Google sheet AFTER a given sheet range
+   *
+   * @param spreadsheetId The spreadsheet id
+   * @param range The range of the sheet
+   * @param rowValues The rows to be appended in form of List<Object>
+   * @return updated row count
+   * @throws GeneralSecurityException
+   * @throws IOException
+   */
   public static Integer appendSheetValues(
       String spreadsheetId, String range, List<Object> rowValues)
       throws GeneralSecurityException, IOException {
@@ -183,15 +209,16 @@ public class GsheetsApi {
     }
   }
 
-    /**
-     * Deletes a row in a Google sheet based on start and end row index
-     * @param spreadsheetId The spreadsheet id
-     * @param sheetId   The sheet id in the spreadsheet
-     * @param startIndex    The start row index
-     * @param endIndex    The end row index
-     * @throws GeneralSecurityException
-     * @throws IOException
-     */
+  /**
+   * Deletes a row in a Google sheet based on start and end row index
+   *
+   * @param spreadsheetId The spreadsheet id
+   * @param sheetId The sheet id in the spreadsheet
+   * @param startIndex The start row index
+   * @param endIndex The end row index
+   * @throws GeneralSecurityException
+   * @throws IOException
+   */
   public static void deleteRow(String spreadsheetId, int sheetId, int startIndex, int endIndex)
       throws GeneralSecurityException, IOException {
     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -220,18 +247,19 @@ public class GsheetsApi {
       service.spreadsheets().batchUpdate(spreadsheetId, content).execute();
     } catch (IOException e) {
       e.printStackTrace();
-        logger.error("Error in deleting row");
+      logger.error("Error in deleting row");
     }
   }
 
-    /**
-     * Reads the values of a sheet in a Google sheet and return as List<Map<String, String>>
-     * @param spreadsheetId The spreadsheet id
-     * @param sheetRange The sheet range
-     * @return list of result rows
-     * @throws GeneralSecurityException
-     * @throws IOException
-     */
+  /**
+   * Reads the values of a sheet in a Google sheet and return as List<Map<String, String>>
+   *
+   * @param spreadsheetId The spreadsheet id
+   * @param sheetRange The sheet range
+   * @return list of result rows
+   * @throws GeneralSecurityException
+   * @throws IOException
+   */
   public static List<Map<String, String>> readSheetValuesAsListMap(
       String spreadsheetId, String sheetRange) throws GeneralSecurityException, IOException {
     List<List<Object>> sheetValues = GsheetsApi.readSheetValues(spreadsheetId, sheetRange);
@@ -244,12 +272,14 @@ public class GsheetsApi {
     return tableDataMap;
   }
 
-    /**
-     * Helper method to create a map of column name and value using the table header and data. Used in {@link GsheetsApi#readSheetValuesAsListMap(String, String)}
-     * @param tableHeader
-     * @param row
-     * @return
-     */
+  /**
+   * Helper method to create a map of column name and value using the table header and data. Used in
+   * {@link GsheetsApi#readSheetValuesAsListMap(String, String)}
+   *
+   * @param tableHeader
+   * @param row
+   * @return
+   */
   private static Map<String, String> createColumnMap(List<Object> tableHeader, List<Object> row) {
     Map<String, String> colMap = new HashMap<>();
     int i = 0;
@@ -274,27 +304,26 @@ public class GsheetsApi {
   public static List<Integer> findRows(
       String spreadsheetId, String sheetRange, GColumnFilters conditions)
       throws GeneralSecurityException, IOException {
-    List<Map<String, String>> tableDataMap = GsheetsApi.readSheetValuesAsListMap(spreadsheetId, sheetRange);
+    List<Map<String, String>> tableDataMap =
+        GsheetsApi.readSheetValuesAsListMap(spreadsheetId, sheetRange);
 
     List<Integer> filteredRowNos =
-            IntStream.range(0, tableDataMap.size())
-                    .filter(i ->
-                            (conditions.apply().test(tableDataMap.get(i))))
-                    .mapToObj(i -> i + 2) // +2 because the first row is the header row and index starts from 0
-                    .collect(toList());
+        IntStream.range(0, tableDataMap.size())
+            .filter(i -> (conditions.apply().test(tableDataMap.get(i))))
+            .mapToObj(
+                i -> i + 2) // +2 because the first row is the header row and index starts from 0
+            .collect(toList());
 
     return filteredRowNos;
   }
 
   public static List<Map<String, String>> filterRows(
-          String spreadsheetId, String sheetRange, GColumnFilters conditions)
-          throws GeneralSecurityException, IOException {
-    List<Map<String, String>> tableDataMap = GsheetsApi.readSheetValuesAsListMap(spreadsheetId, sheetRange);
-    return tableDataMap.stream()
-            .filter(conditions.apply())
-            .collect(toList());
+      String spreadsheetId, String sheetRange, GColumnFilters conditions)
+      throws GeneralSecurityException, IOException {
+    List<Map<String, String>> tableDataMap =
+        GsheetsApi.readSheetValuesAsListMap(spreadsheetId, sheetRange);
+    return tableDataMap.stream().filter(conditions.apply()).collect(toList());
   }
-
 
   private static List<List<Object>> getTableData(List<List<Object>> sheetValues) {
     return sheetValues.subList(1, sheetValues.size());
@@ -303,7 +332,4 @@ public class GsheetsApi {
   private static List<Object> getTableHeader(List<List<Object>> sheetValues) {
     return sheetValues.get(0);
   }
-
-
-
 }
