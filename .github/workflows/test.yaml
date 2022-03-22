@@ -55,10 +55,12 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
         with:
+          token_format: 'id_token'
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - name: Check if token is created
         run: |
           ls -lR ${{ github.workspace }}
+          echo ${{ env.credentials_file_path }}
           cd credentials && ls -la
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
