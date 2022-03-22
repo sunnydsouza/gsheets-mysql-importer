@@ -58,8 +58,7 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - name: Check if token is created
         run: |
-          echo ${{ steps.auth.outputs.project_id }}'
-          echo ${{ steps.auth.outputs.credentials_file_path }}
+          cat $(ls -l | grep 'gha-creds-*.json' )
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
         with:
