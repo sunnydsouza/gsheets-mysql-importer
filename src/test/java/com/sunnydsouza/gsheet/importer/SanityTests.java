@@ -18,9 +18,12 @@ import java.util.Map;
 
 public class SanityTests {
 
+//  static final String PROPERTY_FILE = "configuration/expenses.properties";    //for LOCAL testing
+  static final String PROPERTY_FILE = "configuration/sampletest.properties";  //for GITHUB_ACTIONS
+
   @Test
   public void filterRowSingleColumnGSheets() throws GeneralSecurityException, IOException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Map<String, String>> rows =
         GsheetsApi.filterRows(
             GSheetImporter.GSHEETS_ID,
@@ -32,7 +35,7 @@ public class SanityTests {
 
   @Test
   public void filterRowMultipleColumnsGSheets() throws GeneralSecurityException, IOException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Map<String, String>> rows =
         GsheetsApi.filterRows(
             GSheetImporter.GSHEETS_ID,
@@ -46,7 +49,7 @@ public class SanityTests {
 
   @Test
   public void filteredRowNoSingleColumnGSheets() throws GeneralSecurityException, IOException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
         GsheetsApi.findRows(
             GSheetImporter.GSHEETS_ID,
@@ -58,7 +61,7 @@ public class SanityTests {
 
   @Test
   public void filteredRowNoMultipleColumnsGSheets() throws GeneralSecurityException, IOException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
         GsheetsApi.findRows(
             GSheetImporter.GSHEETS_ID,
@@ -72,7 +75,7 @@ public class SanityTests {
 
   @Test
   public void filteredRowNoGreaterThan() throws GeneralSecurityException, IOException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
         GsheetsApi.findRows(
             GSheetImporter.GSHEETS_ID,
@@ -84,7 +87,7 @@ public class SanityTests {
 
   @Test
   public void filteredRowDatesBetween() throws GeneralSecurityException, IOException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
             GsheetsApi.findRows(
                     GSheetImporter.GSHEETS_ID,
@@ -96,7 +99,7 @@ public class SanityTests {
 
   @Test
   public void importGoogleSheetDb() throws GeneralSecurityException, IOException, SQLException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     GSheetImporter.importGsheet(
         "Expense",
         "Expense!A:F");
@@ -104,7 +107,7 @@ public class SanityTests {
 
   @Test
   public void importGoogleSheetDbWithColTransformer() throws SQLException, GeneralSecurityException, IOException {
-    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    GSheetImporter.readConfiguration(PROPERTY_FILE);
     GSheetImporter.importGsheet(
             "Expense",
             "Expense!A:F",

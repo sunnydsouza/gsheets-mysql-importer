@@ -60,6 +60,8 @@ jobs:
       - name: Verify MySQL connection from host
         run: |
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
+          mysql --host 127.0.0.1 --port 32574 -uroot -ppassword < configuration/sampletest.sql
+          mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
