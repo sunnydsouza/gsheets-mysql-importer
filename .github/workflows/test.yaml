@@ -55,7 +55,6 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
         with:
-          token_format: 'id_token'
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - name: Check if token is created
         run: |
