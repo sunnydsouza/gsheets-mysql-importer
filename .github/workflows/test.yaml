@@ -58,7 +58,7 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - name: Move the token created to credentials folder
         run: |
-          mv gha-creds-*.json ./credentials/credentials.json
+          mv ${{ env.GOOGLE_GHA_CREDS_PATH }} ./credentials/credentials.json
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
         with:
