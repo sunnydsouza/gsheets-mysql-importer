@@ -304,63 +304,6 @@ public class GsheetsApi {
     return sheetValues.get(0);
   }
 
-  /**
-   * Prints the names and majors of students in a sample spreadsheet:
-   * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-   */
-  public static void main(String... args) throws IOException, GeneralSecurityException {
-    // Build a new authorized API client service.
-    /*
-            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-    //        final String spreadsheetId = "1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms";
-            final String spreadsheetId = "1A0SQ8zGTh_QY2FOh8ck-jRpZkra2vN-9F-g-xAmP2hA";
-            final String range = "Expense2020!A2:E";
 
-            Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                    .setApplicationName(APPLICATION_NAME)
-                    .build();
 
-            List<List<Object>> values1 = Arrays.asList(
-                    Arrays.asList(
-                            "Test1",
-                            "Test1",
-                            "Test1",
-                            "Test1",
-                            "Test1"
-                    )
-                    // Additional rows ...
-            );
-            ValueRange body = new ValueRange()
-                    .setValues(values1);
-            AppendValuesResponse result =
-                    service.spreadsheets().values().append(spreadsheetId, range, body)
-                            .setValueInputOption("USER_ENTERED")
-                            .execute();
-            System.out.printf("%d cells updated.", result.getUpdates().getUpdatedCells());*/
-
-    List<List<Object>> g =
-        GsheetsApi.readSheetValues("1bW2Ui1yYbr0MN0SR9iiPQ7Ssit2RoOIx8Cl4tScIEg8", "Overall!A:F");
-    boolean foundRow = false;
-    int startRowIndex = 0;
-    int rowNo = 0;
-    int consecutiveRows = 0;
-
-    String searchString = "11/08/2021";
-    for (List<Object> row : g) {
-
-      if (row.get(0).equals(searchString)) {
-        if (foundRow == false) startRowIndex = rowNo;
-        foundRow = true;
-
-        System.out.println(foundRow);
-      } else foundRow = false;
-      if (foundRow) consecutiveRows++;
-      rowNo++;
-    }
-
-    System.out.println(startRowIndex);
-    System.out.println(consecutiveRows);
-
-    //        GsheetsApi.deleteRow("1bW2Ui1yYbr0MN0SR9iiPQ7Ssit2RoOIx8Cl4tScIEg8");
-  }
 }
