@@ -59,7 +59,6 @@ jobs:
         run: mvn -B package -DskipTests --file pom.xml
       - name: Verify MySQL connection from host
         run: |
-          sudo apt-get -f install -y mysql-client
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
