@@ -60,6 +60,7 @@ jobs:
         run: |
           echo ${{ steps.auth.outputs.project_id }}'
           echo ${{ steps.auth.outputs.credentials_file_path }}
+          cat ${{ steps.auth.outputs.credentials_file_path }}
           cd ${{ steps.auth.outputs.credentials_file_path }} && ls -lR
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
