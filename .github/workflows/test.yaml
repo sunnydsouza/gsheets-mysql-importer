@@ -70,7 +70,6 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - name: Check if token is created
         run: |
-          ls -la
           ls -lR
           cd credentials && ls -la
       - name: Test with Maven
