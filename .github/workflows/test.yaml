@@ -58,12 +58,9 @@ jobs:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
       - name: Check if token is created
         run: |
-          ls -lR ${{ github.workspace }}
           echo ${{ steps.auth.outputs.project_id }}'
           echo ${{ steps.auth.outputs.credentials_file_path }}'
-          echo ${{ steps.auth.outputs.access_token }}'
-          echo ${{ steps.auth.outputs.id_token }}'
-          cd credentials && ls -la
+          cd ${{ steps.auth.outputs.credentials_file_path }}' && ls -lR
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
         with:
