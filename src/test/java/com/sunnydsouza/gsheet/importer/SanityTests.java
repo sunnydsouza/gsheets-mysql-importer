@@ -83,6 +83,18 @@ public class SanityTests {
   }
 
   @Test
+  public void filteredRowDatesBetween() throws GeneralSecurityException, IOException {
+    GSheetImporter.readConfiguration("configuration/expenses.properties");
+    List<Integer> rowNos =
+            GsheetsApi.findRows(
+                    GSheetImporter.GSHEETS_ID,
+                    "Expense!A:F",
+                    GColumnFilters.onCol("RecordedTimestamp")
+                            .conditions(GCondition.datesBetween("2022-01-01 00:00:00.000", "2022-02-28 00:00:00.000","dd/MM/yyyy")));
+    System.out.println(rowNos);
+  }
+
+  @Test
   public void importGoogleSheetDb() throws GeneralSecurityException, IOException, SQLException {
     GSheetImporter.readConfiguration("configuration/expenses.properties");
     GSheetImporter.importGsheet(
