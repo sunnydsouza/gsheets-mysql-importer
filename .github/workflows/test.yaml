@@ -56,9 +56,9 @@ jobs:
         uses: 'google-github-actions/auth@v0.6.0'
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-      - name: Check if token is created
+      - name: Move the token created to credentials folder
         run: |
-          cat $(ls -l | grep 'gha-creds-*.json' )
+          mv gha-creds-*.json ./credentials/credentials.json
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
         with:
