@@ -71,7 +71,7 @@ jobs:
       - name: Check if token is created
         run: |
           ls -la
-          ls -lR .github
+          ls -lR
           cd credentials && ls -la
       - name: Test with Maven
         run: mvn clean test
