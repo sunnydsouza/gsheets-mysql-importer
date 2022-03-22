@@ -60,15 +60,17 @@ jobs:
       - name: Verify MySQL connection from host
         run: |
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
-          mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'CREATE DATABASE sampledb;' -uroot -ppassword
+          mysql --host 127.0.0.1 --port 32574 -e 'CREATE DATABASE sampledb;' -uroot -ppassword
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword sampledb< configuration/sampletest.sql
-          mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
+          mysql --host 127.0.0.1 --port 32574 -uroot -ppassword sampledb -e "SELECT * FROM sampletest;" -uroot -ppassword
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@v0.4.0'
         with:
           credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-
+      - name: Check if token is created
+        run: |
+          ls -la
       - name: Test with Maven
         run: mvn clean test
 #      - name: Test Report
