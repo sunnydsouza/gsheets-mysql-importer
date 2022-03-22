@@ -45,9 +45,21 @@ jobs:
         ports:
           - 32574:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.4.0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      - name: Check if token is created
+        run: |
+          ls -lR ${{ github.workspace }}
+          cd credentials && ls -la
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
         with:
@@ -63,15 +75,7 @@ jobs:
           mysql --host 127.0.0.1 --port 32574 -e 'CREATE DATABASE sampledb;' -uroot -ppassword
           mysql --host 127.0.0.1 --port 32574 -uroot -ppassword sampledb< configuration/sampletest.sql
           mysql --host 127.0.0.1 --port 32574 sampledb -e "SELECT * FROM Expense;" -uroot -ppassword
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v0.4.0'
-        with:
-          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-      - name: Check if token is created
-        run: |
-          ls -lR
-          cd credentials && ls -la
+
       - name: Test with Maven
         run: mvn clean test
 #      - name: Test Report

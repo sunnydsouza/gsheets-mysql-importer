@@ -18,8 +18,8 @@ import java.util.Map;
 
 public class SanityTests {
 
-//  static final String PROPERTY_FILE = "configuration/expenses.properties";    //for LOCAL testing
-  static final String PROPERTY_FILE = "configuration/sampletest.properties";  //for GITHUB_ACTIONS
+  static final String PROPERTY_FILE = "configuration/expenses.properties";    //for LOCAL testing
+//  static final String PROPERTY_FILE = "configuration/sampletest.properties";  //for GITHUB_ACTIONS
 
   @Test
   public void filterRowSingleColumnGSheets() throws GeneralSecurityException, IOException {

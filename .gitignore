@@ -25,7 +25,7 @@ hs_err_pid*
 #custom ignores
 /.idea/*
 /target/*
-/credentials/credentials.json
+/credentials/credentials.json.backup
 /credentials/token.json
 *.iml
 /tokens/StoredCredential
