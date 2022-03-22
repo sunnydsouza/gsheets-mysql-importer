@@ -44,14 +44,14 @@ public class GsheetsApi {
   private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
   private static final String CREDENTIALS_FILE_PATH =
-      System.getProperty("user.dir") + "/credentials/credentials.json.backup";
+      System.getProperty("user.dir") + "/credentials/credentials.json";
 
   /**
    * Creates an authorized Credential object.
    *
    * @param HTTP_TRANSPORT The network HTTP Transport.
    * @return An authorized Credential object.
-   * @throws IOException If the credentials.json.backup file cannot be found.
+   * @throws IOException If the credentials.json file cannot be found.
    */
   private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
       throws IOException {
