@@ -129,7 +129,7 @@ public class GCondition {
     };
   }
 
-  public static Predicate<String> dateGreaterThan(String expectedDate, String colDateFormat) {
+  public static Predicate<String> datesGreaterThan(String expectedDate, String colDateFormat) {
     return v -> {
       try {
         return (new SimpleDateFormat(colDateFormat)
@@ -155,7 +155,7 @@ public class GCondition {
     };
   }
 
-  public static Predicate<String> dateGreaterThanOrEquals(
+  public static Predicate<String> datesGreaterThanOrEquals(
       String expectedDate, String colDateFormat) {
     return v -> {
       try {
