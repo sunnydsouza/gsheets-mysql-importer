@@ -18,15 +18,14 @@ import java.util.Map;
 
 public class SanityTests {
 
-//  static final String PROPERTY_FILE = "configuration/expenses.properties";    //for LOCAL testing
-  static final String PROPERTY_FILE = "configuration/sampletest.properties";  //for GITHUB_ACTIONS
+  static final String PROPERTY_FILE = "configuration/expenses.properties";    //for LOCAL testing
+//  static final String PROPERTY_FILE = "configuration/sampletest.properties";  //for GITHUB_ACTIONS
 
   @Test
   public void filterRowSingleColumnGSheets() throws GeneralSecurityException, IOException {
     GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Map<String, String>> rows =
-        GsheetsApi.filterRows(
-            GSheetImporter.GSHEETS_ID,
+        GsheetsApi.spreadsheet(GSheetImporter.GSHEETS_ID).filterRows(
             "Expense!A:F",
             GColumnFilters.onCol("RecordedTimestamp")
                 .conditions(GCondition.equals("01/03/2022").or(GCondition.equals("11/04/2022"))));
@@ -37,8 +36,7 @@ public class SanityTests {
   public void filterRowMultipleColumnsGSheets() throws GeneralSecurityException, IOException {
     GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Map<String, String>> rows =
-        GsheetsApi.filterRows(
-            GSheetImporter.GSHEETS_ID,
+        GsheetsApi.spreadsheet(GSheetImporter.GSHEETS_ID).filterRows(
             "Expense!A:F",
             GColumnFilters.onCol("RecordedTimestamp")
                 .conditions(GCondition.equals("01/03/2022").or(GCondition.equals("11/04/2022")))
@@ -51,8 +49,7 @@ public class SanityTests {
   public void filteredRowNoSingleColumnGSheets() throws GeneralSecurityException, IOException {
     GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
-        GsheetsApi.findRows(
-            GSheetImporter.GSHEETS_ID,
+        GsheetsApi.spreadsheet(GSheetImporter.GSHEETS_ID).findRows(
             "Expense!A:F",
             GColumnFilters.onCol("RecordedTimestamp")
                 .conditions(GCondition.equals("01/03/2022").or(GCondition.equals("11/04/2022"))));
@@ -63,8 +60,7 @@ public class SanityTests {
   public void filteredRowNoMultipleColumnsGSheets() throws GeneralSecurityException, IOException {
     GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
-        GsheetsApi.findRows(
-            GSheetImporter.GSHEETS_ID,
+        GsheetsApi.spreadsheet(GSheetImporter.GSHEETS_ID).findRows(
             "Expense!A:F",
             GColumnFilters.onCol("RecordedTimestamp")
                 .conditions(GCondition.equals("01/03/2022").or(GCondition.equals("11/04/2022")))
@@ -77,8 +73,7 @@ public class SanityTests {
   public void filteredRowNoGreaterThan() throws GeneralSecurityException, IOException {
     GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
-        GsheetsApi.findRows(
-            GSheetImporter.GSHEETS_ID,
+        GsheetsApi.spreadsheet(GSheetImporter.GSHEETS_ID).findRows(
             "Expense!A:F",
             GColumnFilters.onCol("RecordedTimestamp")
                 .conditions(GCondition.lessThan("01/03/2022")));
@@ -89,8 +84,7 @@ public class SanityTests {
   public void filteredRowDatesBetween() throws GeneralSecurityException, IOException {
     GSheetImporter.readConfiguration(PROPERTY_FILE);
     List<Integer> rowNos =
-            GsheetsApi.findRows(
-                    GSheetImporter.GSHEETS_ID,
+            GsheetsApi.spreadsheet(GSheetImporter.GSHEETS_ID).findRows(
                     "Expense!A:F",
                     GColumnFilters.onCol("RecordedTimestamp")
                             .conditions(GCondition.datesBetween("2022-01-01 00:00:00.000", "2022-02-28 00:00:00.000","dd/MM/yyyy")));

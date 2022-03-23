@@ -55,25 +55,25 @@ public class GSheetImporter {
 
     /**
      * Imports data from a Google Sheet (sheet and range) into a database.
-     * @param dbTableName This is the name of the table in the database AS WELL AS the name of the sheet in the google sheet.Case sensitive.
+     * @param dbTableNameAndGoogleSheetName This is the name of the table in the database AS WELL AS the name of the sheet in the google sheet.Case sensitive.
      * @param googleSheetRange The range of the sheet in the google sheet.
      * @param tableTransformer This is a custom transformer to transform data (from columns) in sheets BEFORE importing to database.
      * @throws GeneralSecurityException
      * @throws IOException
      * @throws SQLException
      */
-    public static void importGsheet(String dbTableName, String googleSheetRange, TableTransformer tableTransformer) throws GeneralSecurityException, IOException, SQLException {
-        logger.debug("tableName:{}", dbTableName);
+    public static void importGsheet(String dbTableNameAndGoogleSheetName, String googleSheetRange, TableTransformer tableTransformer) throws GeneralSecurityException, IOException, SQLException {
+        logger.debug("tableName:{}", dbTableNameAndGoogleSheetName);
 
-        DatabaseConnection.executeDmlDdlQuery(DatabaseConnection.getCurrentConnection(JDBC_CONN_STR).prepareStatement("TRUNCATE TABLE " + dbTableName));
-        List<Map<String, String>> tableDataMap = GsheetsApi.readSheetValuesAsListMap(GSHEETS_ID, googleSheetRange);
+        DatabaseConnection.executeDmlDdlQuery(DatabaseConnection.getCurrentConnection(JDBC_CONN_STR).prepareStatement("TRUNCATE TABLE " + dbTableNameAndGoogleSheetName));
+        List<Map<String, String>> tableDataMap = GsheetsApi.spreadsheet(dbTableNameAndGoogleSheetName).readSheetValuesAsListMap(googleSheetRange);
 
         if(tableTransformer != null) {
             tableDataMap = tableTransformer.transform(tableDataMap);
         }
 
         for (Map<String, String> row : tableDataMap) {
-            PreparedStatement stmt = prepareSqlStmtForRow(dbTableName, row);
+            PreparedStatement stmt = prepareSqlStmtForRow(dbTableNameAndGoogleSheetName, row);
             DatabaseConnection.executeDmlDdlQuery(stmt);
         }
     }

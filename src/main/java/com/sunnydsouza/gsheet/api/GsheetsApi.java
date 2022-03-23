@@ -1,25 +1,20 @@
 package com.sunnydsouza.gsheet.api;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.*;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -37,8 +32,6 @@ public class GsheetsApi {
   private static final String APPLICATION_NAME = "Simple Gsheets API wrapper by sunnydsouza";
   private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
   private static final String TOKENS_DIRECTORY_PATH = "tokens";
-  static final Logger logger = LoggerFactory.getLogger(GsheetsApi.class);
-
   /**
    * Global instance of the scopes required by this quickstart. If modifying these scopes, delete
    * your previously saved tokens/ folder.
@@ -47,6 +40,23 @@ public class GsheetsApi {
 
   private static final String CREDENTIALS_FILE_PATH =
       System.getProperty("user.dir") + "/credentials/credentials.json";
+  final Logger logger = LoggerFactory.getLogger(GsheetsApi.class);
+  Sheets service;
+  String spreadsheetId;
+
+  private GsheetsApi(String gsheetsId) throws GeneralSecurityException, IOException {
+    this.spreadsheetId = gsheetsId;
+    final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+    GoogleCredentials googleCredentials;
+    try (InputStream credentialsStream = new FileInputStream(CREDENTIALS_FILE_PATH)) {
+      googleCredentials = GoogleCredentials.fromStream(credentialsStream).createScoped(SCOPES);
+    }
+    service =
+        new Sheets.Builder(
+                HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(googleCredentials))
+            .setApplicationName(APPLICATION_NAME)
+            .build();
+  }
 
   /**
    * Creates an authorized Credential object.
@@ -55,7 +65,7 @@ public class GsheetsApi {
    * @return An authorized Credential object.
    * @throws IOException If the credentials.json file cannot be found.
    */
-  private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
+  /*  private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT)
       throws IOException {
     // Load client secrets.
     // InputStream in = GsheetsApi.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
@@ -71,66 +81,44 @@ public class GsheetsApi {
             .build();
     LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
     return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-  }
+  }*/
 
   /**
    * Build and return an authorized Sheets API client service.
    *
-   * @param HTTP_TRANSPORT
    * @return
    * @throws IOException
    */
-  /*private static Credential getServiceAccountCredentials(final NetHttpTransport HTTP_TRANSPORT)
+  /*  private static Credential getServiceAccountCredentials(final NetHttpTransport HTTP_TRANSPORT)
             throws IOException {
 
 
   // Initializing the service:
-      final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-      GoogleCredentials googleCredentials;
-      try(InputStream inputSteam = <YOURCLASS>.class.getResourceAsStream("/path/to/credentials/file.json")) {
-        googleCredentials = GoogleCredentials.fromStream(credentialsStream).createScoped(SCOPES)
-      }
-      Sheets service = Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(googleCredentials))
-              .setApplicationName(APPLICATION_NAME)
-              .build()
-    }*/
 
-  /**
-   * Gets the headers of the table for a given sheet range
-   *
-   * @param spreadsheetId The spreadsheet id
-   * @param range The range of the sheet
-   * @return result rows in form of list of list of objects
-   * @throws GeneralSecurityException
-   * @throws IOException
-   */
-  public static List<List<Object>> getTableHeaders(String spreadsheetId, String range)
+      GoogleCredentials googleCredentials;
+      try(InputStream credentialsStream = new FileInputStream(CREDENTIALS_FILE_PATH)) {
+        googleCredentials = GoogleCredentials.fromStream(credentialsStream).createScoped(SCOPES);
+      }
+      service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpCredentialsAdapter(googleCredentials))
+              .setApplicationName(APPLICATION_NAME)
+              .build();
+    }*/
+  public static GsheetsApi spreadsheet(String gsheetsId)
       throws GeneralSecurityException, IOException {
 
-    return readSheetValues(spreadsheetId, range);
+    return new GsheetsApi(gsheetsId);
   }
 
   /**
    * Gets the values of a Google sheet for a given sheet range
    *
-   * @param spreadsheetId The spreadsheet id
    * @param range The range of the sheet
    * @return result rows in form of list of list of objects
-   * @throws GeneralSecurityException
    * @throws IOException
    */
-  public static List<List<Object>> readSheetValues(String spreadsheetId, String range)
-      throws GeneralSecurityException, IOException {
+  public List<List<Object>> readSheetValues(String range) throws IOException {
 
-    // Build a new authorized API client service.
-    final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-
-    Sheets service =
-        new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-            .setApplicationName(APPLICATION_NAME)
-            .build();
-
-    ValueRange response = service.spreadsheets().values().get(spreadsheetId, range).execute();
+    ValueRange response = service.spreadsheets().values().get(this.spreadsheetId, range).execute();
     List<List<Object>> values = response.getValues();
     if (values == null || values.isEmpty()) {
       return null;
@@ -140,25 +128,50 @@ public class GsheetsApi {
   }
 
   /**
+   * Reads the values of a sheet in a Google sheet and return as List<Map<String, String>>
+   *
+   * @param sheetRange The sheet range
+   * @return list of result rows
+   * @throws IOException
+   */
+  public List<Map<String, String>> readSheetValuesAsListMap(String sheetRange) throws IOException {
+    List<List<Object>> sheetValues = readSheetValues(sheetRange);
+    List<Object> tableHeader = getTableHeader(sheetValues);
+    List<List<Object>> tableData = getTableData(sheetValues);
+
+    List<Map<String, String>> tableDataMap =
+        tableData.stream().map(l -> createColumnMap(tableHeader, l)).collect(toList());
+
+    return tableDataMap;
+  }
+
+  /**
+   * Helper method to create a map of column name and value using the table header and data. Used in
+   * {@link GsheetsApi#readSheetValuesAsListMap(String)}
+   *
+   * @param tableHeader
+   * @param row
+   * @return
+   */
+  private Map<String, String> createColumnMap(List<Object> tableHeader, List<Object> row) {
+    Map<String, String> colMap = new HashMap<>();
+    int i = 0;
+    for (Object eachColHeader : tableHeader) {
+      if (i < row.size()) colMap.put((String) eachColHeader, (String) row.get(i));
+      i++;
+    }
+    return colMap;
+  }
+
+  /**
    * Appends rows to a Google sheet AFTER a given sheet range
    *
-   * @param spreadsheetId The spreadsheet id
    * @param range The range of the sheet
    * @param rowValues The rows to be appended in form of List<Object>
    * @return updated row count
-   * @throws GeneralSecurityException
    * @throws IOException
    */
-  public static Integer appendSheetValues(
-      String spreadsheetId, String range, List<Object> rowValues)
-      throws GeneralSecurityException, IOException {
-
-    final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-
-    Sheets service =
-        new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-            .setApplicationName(APPLICATION_NAME)
-            .build();
+  public Integer appendSheetValues(String range, List<Object> rowValues) throws IOException {
 
     List<List<Object>> values =
         Arrays.asList(
@@ -170,7 +183,7 @@ public class GsheetsApi {
         service
             .spreadsheets()
             .values()
-            .append(spreadsheetId, range, body)
+            .append(this.spreadsheetId, range, body)
             .setValueInputOption("USER_ENTERED")
             .execute();
     System.out.println(result.getUpdates().getUpdatedCells());
@@ -179,10 +192,9 @@ public class GsheetsApi {
 
   // Deletes rows that matching the date codition in the first column of the sheet. SPECIFIC USE
   // CASE ONLY
-  public static void deleteRowMatchingDate(
-      String spreadsheetId, String sheetRange, int sheetId, String date)
-      throws GeneralSecurityException, IOException {
-    List<List<Object>> g = GsheetsApi.readSheetValues(spreadsheetId, sheetRange);
+  public void deleteRowMatchingDate(
+      String spreadsheetId, String sheetRange, int sheetId, String date) throws IOException {
+    List<List<Object>> g = readSheetValues(sheetRange);
     boolean foundRow = false;
     int startRowIndex = 0;
     int rowNo = 0;
@@ -216,16 +228,8 @@ public class GsheetsApi {
    * @param sheetId The sheet id in the spreadsheet
    * @param startIndex The start row index
    * @param endIndex The end row index
-   * @throws GeneralSecurityException
-   * @throws IOException
    */
-  public static void deleteRow(String spreadsheetId, int sheetId, int startIndex, int endIndex)
-      throws GeneralSecurityException, IOException {
-    final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-    Sheets service =
-        new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-            .setApplicationName(APPLICATION_NAME)
-            .build();
+  public void deleteRow(String spreadsheetId, int sheetId, int startIndex, int endIndex) {
 
     BatchUpdateSpreadsheetRequest content = new BatchUpdateSpreadsheetRequest();
 
@@ -252,60 +256,16 @@ public class GsheetsApi {
   }
 
   /**
-   * Reads the values of a sheet in a Google sheet and return as List<Map<String, String>>
-   *
-   * @param spreadsheetId The spreadsheet id
-   * @param sheetRange The sheet range
-   * @return list of result rows
-   * @throws GeneralSecurityException
-   * @throws IOException
-   */
-  public static List<Map<String, String>> readSheetValuesAsListMap(
-      String spreadsheetId, String sheetRange) throws GeneralSecurityException, IOException {
-    List<List<Object>> sheetValues = GsheetsApi.readSheetValues(spreadsheetId, sheetRange);
-    List<Object> tableHeader = getTableHeader(sheetValues);
-    List<List<Object>> tableData = getTableData(sheetValues);
-
-    List<Map<String, String>> tableDataMap =
-        tableData.stream().map(l -> createColumnMap(tableHeader, l)).collect(toList());
-
-    return tableDataMap;
-  }
-
-  /**
-   * Helper method to create a map of column name and value using the table header and data. Used in
-   * {@link GsheetsApi#readSheetValuesAsListMap(String, String)}
-   *
-   * @param tableHeader
-   * @param row
-   * @return
-   */
-  private static Map<String, String> createColumnMap(List<Object> tableHeader, List<Object> row) {
-    Map<String, String> colMap = new HashMap<>();
-    int i = 0;
-    for (Object eachColHeader : tableHeader) {
-      if (i < row.size()) colMap.put((String) eachColHeader, (String) row.get(i));
-      i++;
-    }
-    return colMap;
-  }
-
-  /**
    * Helps find rows matching a set of Predicate conditions Assumes that the first row of the
    * sheetRange is a header row
    *
-   * @param spreadsheetId
    * @param sheetRange
    * @param conditions
-   * @throws GeneralSecurityException
    * @throws IOException
    * @return
    */
-  public static List<Integer> findRows(
-      String spreadsheetId, String sheetRange, GColumnFilters conditions)
-      throws GeneralSecurityException, IOException {
-    List<Map<String, String>> tableDataMap =
-        GsheetsApi.readSheetValuesAsListMap(spreadsheetId, sheetRange);
+  public List<Integer> findRows(String sheetRange, GColumnFilters conditions) throws IOException {
+    List<Map<String, String>> tableDataMap = readSheetValuesAsListMap(sheetRange);
 
     List<Integer> filteredRowNos =
         IntStream.range(0, tableDataMap.size())
@@ -317,19 +277,17 @@ public class GsheetsApi {
     return filteredRowNos;
   }
 
-  public static List<Map<String, String>> filterRows(
-      String spreadsheetId, String sheetRange, GColumnFilters conditions)
-      throws GeneralSecurityException, IOException {
-    List<Map<String, String>> tableDataMap =
-        GsheetsApi.readSheetValuesAsListMap(spreadsheetId, sheetRange);
+  public List<Map<String, String>> filterRows(String sheetRange, GColumnFilters conditions)
+      throws IOException {
+    List<Map<String, String>> tableDataMap = readSheetValuesAsListMap(sheetRange);
     return tableDataMap.stream().filter(conditions.apply()).collect(toList());
   }
 
-  private static List<List<Object>> getTableData(List<List<Object>> sheetValues) {
+  private List<List<Object>> getTableData(List<List<Object>> sheetValues) {
     return sheetValues.subList(1, sheetValues.size());
   }
 
-  private static List<Object> getTableHeader(List<List<Object>> sheetValues) {
+  private List<Object> getTableHeader(List<List<Object>> sheetValues) {
     return sheetValues.get(0);
   }
 }
