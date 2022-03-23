@@ -51,6 +51,14 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.6.0'
+        with:
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+#      - name: Move the token created to credentials folder
+#        run: |
+#          mv ${{ env.GOOGLE_GHA_CREDS_PATH }} ./credentials/credentials.json
       - name: Create credential.json file
         id: create-json
         uses: jsdaniell/create-json@1.1.2
@@ -68,6 +76,7 @@ jobs:
           path: |
             ${{ github.workspace }}/credentials
             ${{ github.workspace }}/token
+            ${{ env.GOOGLE_GHA_CREDS_PATH }}
       - name: Build on Java ${{ matrix.Java }}
         uses: actions/setup-java@v2
         with:
