@@ -18,8 +18,8 @@ import java.util.function.Predicate;
  * @author sunnydsouza
  */
 public class GColumnFilters {
-  private String columnName;
-  static Map<String, Predicate> predicateMap = new HashMap<>();
+  String columnName;
+  Map<String, Predicate> predicateMap = new HashMap<>();
 
   Logger logger = LoggerFactory.getLogger(GColumnFilters.class);
 
