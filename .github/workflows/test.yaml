@@ -61,8 +61,8 @@ jobs:
 #          mv ${{ env.GOOGLE_GHA_CREDS_PATH }} ./credentials/credentials.json
       - name: Create credential.json file
         run: |
-          printf ${{ secrets.GOOGLE_SECRET }} >> ./credentials/credentials.json
-          printf ${{ secrets.STORED_CREDENTIAL }} >> ./token/StoredCredential
+          printf "${{ secrets.GOOGLE_SECRET }}" >> ./credentials/credentials.json
+          printf "${{ secrets.STORED_CREDENTIAL }}" >> ./token/StoredCredential
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
         with:
