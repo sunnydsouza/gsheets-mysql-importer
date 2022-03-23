@@ -51,17 +51,14 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
-#      - id: 'auth'
-#        name: 'Authenticate to Google Cloud'
-#        uses: 'google-github-actions/auth@v0.6.0'
-#        with:
-#          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-#      - name: Move the token created to credentials folder
-#        run: |
-#          mv ${{ env.GOOGLE_GHA_CREDS_PATH }} ./credentials/credentials.json
       - name: Create credential.json file
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "./credentials/credentials.json"
+          json: ${{ secrets.GOOGLE_SECRET }}
+      - name: Create StoredCredential file
         run: |
-          printf "${{ secrets.GOOGLE_SECRET }}" >> ./credentials/credentials.json
           mkdir token
           printf "${{ secrets.STORED_CREDENTIAL }}" >> ./token/StoredCredential
       - name: Upload a Build Artifact
