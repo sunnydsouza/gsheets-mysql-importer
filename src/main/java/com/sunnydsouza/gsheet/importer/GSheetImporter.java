@@ -66,7 +66,7 @@ public class GSheetImporter {
         logger.debug("tableName:{}", dbTableNameAndGoogleSheetName);
 
         DatabaseConnection.executeDmlDdlQuery(DatabaseConnection.getCurrentConnection(JDBC_CONN_STR).prepareStatement("TRUNCATE TABLE " + dbTableNameAndGoogleSheetName));
-        List<Map<String, String>> tableDataMap = GsheetsApi.spreadsheet(dbTableNameAndGoogleSheetName).readSheetValuesAsListMap(googleSheetRange);
+        List<Map<String, String>> tableDataMap = GsheetsApi.spreadsheet(GSHEETS_ID).readSheetValuesAsListMap(googleSheetRange);
 
         if(tableTransformer != null) {
             tableDataMap = tableTransformer.transform(tableDataMap);
