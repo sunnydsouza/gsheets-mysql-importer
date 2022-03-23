@@ -103,8 +103,8 @@ public class SanityTests {
   public void importGoogleSheetDbWithColTransformer() throws SQLException, GeneralSecurityException, IOException {
     GSheetImporter.readConfiguration(PROPERTY_FILE);
     GSheetImporter.importGsheet(
-            "Expense",
-            "Expense!A:F",
+            "ExpenseDateTransform",
+            "ExpenseDateTransform!A:F",
             new TableTransformer()
                     .addColumnTransformer("RecordedTimestamp", new RecordedTimestampTransformer()));
   }
